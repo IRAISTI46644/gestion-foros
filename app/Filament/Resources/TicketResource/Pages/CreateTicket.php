@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Filament\Resources\TicketResource\Pages;
+
+use App\Filament\Resources\TicketResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateTicket extends CreateRecord
+{
+    protected static string $resource = TicketResource::class;
+
+    protected function afterCreate(): void
+    {
+        // Llamada al método definido en el Resource
+        TicketResource::afterCreate($this->record);
+    }
+}
