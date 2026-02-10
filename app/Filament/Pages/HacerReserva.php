@@ -65,4 +65,9 @@ class HacerReserva extends Page
         Notification::make()->title('¡Reserva Exitosa!')->success()->send();
         return redirect()->to('/admin/reservas');
     }
+    public static function canAccess(): bool
+{
+    // Solo los de TV y Radio pueden entrar a esta página
+    return in_array(auth()->user()->direccion, ['tv', 'radio','admin']);
+}
 }

@@ -99,4 +99,12 @@ class ForoResource extends Resource
             'edit' => Pages\EditForo::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        // Solo permite el acceso si el ID del usuario es 1 (Administrador).
+        return auth()->id() === 1;
+        
+        // Opcionalmente, puedes usar el correo si prefieres:
+        // return auth()->user()?->email === 'tu-correo@admin.com';
+    }
 }

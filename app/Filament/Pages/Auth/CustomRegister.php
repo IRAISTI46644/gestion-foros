@@ -23,7 +23,7 @@ class CustomRegister extends BaseRegister
                         ->label('Dirección General')
                         ->options([
                             // Acceso HelpDesk Únicamente
-                            'admin' => 'Dirección de Administración y Finanzas',
+                            'administ' => 'Dirección de Administración y Finanzas',
                             'juridico' => 'Dirección de Asuntos Jurídicos',
                             'difusion' => 'Subdirección de Difusión y Promoción',
                             'it' => 'Dirección de Infraestructura Tecnológica',
@@ -41,7 +41,7 @@ class CustomRegister extends BaseRegister
                         ->required()
                         ->visible(fn (Get $get) => filled($get('direccion')))
                         ->options(fn (Get $get): array => match ($get('direccion')) {
-                            'admin' => [
+                            'administ' => [
                                 'Recursos Financieros' => 'Recursos Financieros',
                                 'Factor Humano' => 'Factor Humano',
                                 'Recursos Materiales' => 'Recursos Materiales',

@@ -10,41 +10,33 @@ class TicketPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Todos los usuarios registrados pueden entrar al HelpDesk.
-     */
     public function viewAny(User $user): bool
     {
         return true; 
     }
 
     /**
-     * Un usuario solo puede ver su propio ticket, a menos que sea Admin.
+     * IMPORTANTE: Permitimos ver el ticket si es el dueño o el admin.
+     * Esto habilitará el botón "View" en Filament.
      */
     public function view(User $user, Ticket $ticket): bool
     {
         return $user->id === 1 || $user->id === $ticket->user_id;
     }
 
-    /**
-     * Cualquier empleado de cualquier área puede crear un ticket.
-     */
     public function create(User $user): bool
     {
         return true; 
     }
 
     /**
-     * Solo el Admin puede actualizar (responder/cerrar) los tickets.
+     * Solo el Admin (ID 1) puede usar el botón de Guardar/Editar.
      */
     public function update(User $user, Ticket $ticket): bool
     {
         return $user->id === 1;
     }
 
-    /**
-     * Solo el Admin puede borrar tickets si es necesario.
-     */
     public function delete(User $user, Ticket $ticket): bool
     {
         return $user->id === 1;

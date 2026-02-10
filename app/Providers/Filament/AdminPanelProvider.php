@@ -19,11 +19,11 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\HtmlString;
+// Importamos el plugin del calendario
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
-    // ... (mantén tus imports arriba igual)
-
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -44,9 +44,15 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-           ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 \App\Filament\Widgets\UserStats::class,
+            ])
+            // Registramos el plugin aquí para que Filament lo reconozca
+            ->plugins([
+                FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable(),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -59,10 +65,8 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            
             ->authMiddleware([
                 Authenticate::class,
             ]);
-            
     }
 }

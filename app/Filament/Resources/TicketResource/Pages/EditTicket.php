@@ -16,12 +16,12 @@ class EditTicket extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            // Botón de Gestión para el Admin
+            // Botón de Gestión rápida para el Administrador
             Actions\Action::make('gestionar_ticket')
                 ->label('Gestionar Ticket (Admin)')
                 ->icon('heroicon-m-adjustments-horizontal')
                 ->color('danger') 
-                ->visible(fn () => Auth::user()?->id === 1) // Solo visible para el ID 1
+                ->visible(fn () => Auth::user()?->id === 1) // Solo el Admin ID 1 lo ve
                 ->form([
                     Forms\Components\Select::make('estado')
                         ->options([
@@ -38,12 +38,13 @@ class EditTicket extends EditRecord
                         ->placeholder('Escribe aquí la respuesta para el usuario...'),
                 ])
                 ->action(function (array $data, $record) {
-                    // Actualiza los datos del ticket
+                    // 1. Guardamos la respuesta y el nuevo estado
                     $record->update($data);
                     
-                    // DISPARA LA NOTIFICACIÓN AL USUARIO (Importante)
+                    // 2. Disparamos la notificación al usuario
                     TicketResource::afterSave($record);
 
+                    // 3. Alerta de éxito visual para el Admin
                     Notification::make()
                         ->title('Ticket actualizado y notificación enviada')
                         ->success()
@@ -54,10 +55,13 @@ class EditTicket extends EditRecord
         ];
     }
 
-    // Se ejecuta si alguien edita el ticket de forma normal (fuera del botón)
+    /**
+     * IMPORTANTE: Este método se ejecuta si editas el ticket 
+     * usando el botón "Guardar" normal de abajo.
+     */
     protected function afterSave(): void
     {
+        // Evitamos que se pierda la notificación en ediciones estándar
         TicketResource::afterSave($this->record);
     }
-    
 }

@@ -45,6 +45,13 @@ class TicketResource extends Resource
                             ->columnSpanFull()
                             ->disabled(fn ($record) => $record !== null),
 
+                        // CAMPO PARA QUE EL ADMIN ESCRIBA LA RESPUESTA
+                        Forms\Components\Textarea::make('respuesta_admin')
+                            ->label('Escribir Respuesta (Solo Admin)')
+                            ->visible(fn () => auth()->id() === 1) // Solo el Admin ID 1 lo ve
+                            ->columnSpanFull(),
+
+                        // VISTA DE LA RESPUESTA PARA EL USUARIO
                         Forms\Components\Placeholder::make('respuesta_admin_display')
                             ->label('Respuesta oficial de SICOM')
                             ->visible(fn ($record) => $record !== null && !empty($record->respuesta_admin))
@@ -75,15 +82,10 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('user.area')
                     ->label('Departamento')
                     ->badge()
-                    ->colors([
-                        'info' => 'audio',
-                        'warning' => 'produccion',
-                        'success' => 'sistemas',
-                        'gray' => 'camaras',
-                    ])
                     ->searchable(),
 
-                Tables\Columns\BadgeColumn::make('estado')
+                Tables\Columns\TextColumn::make('estado')
+                    ->badge()
                     ->colors([
                         'warning' => 'abierto',
                         'info' => 'en proceso',
@@ -109,14 +111,19 @@ class TicketResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(), 
+                Tables\Actions\EditAction::make(), 
             ]);
     }
 
-    // Método para disparar la alerta de creación
+    // --- MÉTODOS DE NOTIFICACIÓN (CORRECCIÓN DE ERROR) ---
+
+    /**
+     * Se dispara al crear un ticket.
+     */
     public static function afterCreate($record): void
     {
-        $admins = \App\Models\User::all(); // Solo para probar si llegan las notis
+        $admins = \App\Models\User::where('id', 1)->get();
         Notification::make()
             ->title('Nuevo Ticket de Soporte')
             ->danger()
@@ -125,7 +132,9 @@ class TicketResource extends Resource
             ->sendToDatabase($admins);
     }
 
-    // Método para disparar la alerta de actualización
+    /**
+     * Se dispara al editar/guardar (ESTO CORRIGE TU ERROR).
+     */
     public static function afterSave($record): void
     {
         Notification::make()
