@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
 use App\Models\Ticket;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -11,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
+use Illuminate\Database\Eloquent\Builder;
 
 class TicketResource extends Resource
 {
@@ -45,13 +48,11 @@ class TicketResource extends Resource
                             ->columnSpanFull()
                             ->disabled(fn ($record) => $record !== null),
 
-                        // CAMPO PARA QUE EL ADMIN ESCRIBA LA RESPUESTA
                         Forms\Components\Textarea::make('respuesta_admin')
                             ->label('Escribir Respuesta (Solo Admin)')
-                            ->visible(fn () => auth()->id() === 1) // Solo el Admin ID 1 lo ve
+                            ->visible(fn () => auth()->id() === 1) 
                             ->columnSpanFull(),
 
-                        // VISTA DE LA RESPUESTA PARA EL USUARIO
                         Forms\Components\Placeholder::make('respuesta_admin_display')
                             ->label('Respuesta oficial de SICOM')
                             ->visible(fn ($record) => $record !== null && !empty($record->respuesta_admin))
@@ -108,40 +109,59 @@ class TicketResource extends Resource
                         'abierto' => 'Abierto',
                         'en proceso' => 'En Proceso',
                         'resuelto' => 'Resuelto',
+                        'rechazado' => 'Rechazado',
                     ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(), 
                 Tables\Actions\EditAction::make(), 
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
-    // --- MÉTODOS DE NOTIFICACIÓN (CORRECCIÓN DE ERROR) ---
-
     /**
-     * Se dispara al crear un ticket.
+     * LÓGICA: El usuario crea el ticket -> LE LLEGA AL ADMIN (ID 1)
      */
     public static function afterCreate($record): void
     {
-        $admins = \App\Models\User::where('id', 1)->get();
-        Notification::make()
-            ->title('Nuevo Ticket de Soporte')
-            ->danger()
-            ->icon('heroicon-o-ticket')
-            ->body("**{$record->user->name}** reportó: {$record->titulo}")
-            ->sendToDatabase($admins);
+        // Buscamos al administrador para avisarle
+        $admin = User::find(1); 
+
+        if ($admin) {
+            Notification::make()
+                ->title('Nuevo Ticket en SICOM')
+                ->icon('heroicon-o-ticket')
+                ->danger() // Rojo para resaltar
+                ->body("**{$record->user->name}** ha reportado: {$record->titulo}")
+                ->actions([
+                    Action::make('atender')
+                        ->label('Atender Reporte')
+                        ->url(static::getUrl('edit', ['record' => $record]))
+                        ->markAsRead(),
+                ])
+                ->sendToDatabase($admin); // Llega a la campana del Admin
+        }
     }
 
     /**
-     * Se dispara al editar/guardar (ESTO CORRIGE TU ERROR).
+     * LÓGICA: El Admin responde/actualiza -> LE LLEGA AL USUARIO
      */
     public static function afterSave($record): void
     {
-        Notification::make()
-            ->title('Tu ticket ha sido actualizado')
-            ->info()
-            ->body("Estado actual: **{$record->estado}**")
-            ->sendToDatabase($record->user);
+        // El destinatario ahora es el dueño del ticket
+        if ($record->user) {
+            Notification::make()
+                ->title('Respuesta de SICOM')
+                ->icon('heroicon-o-chat-bubble-left-right')
+                ->info() // Azul informativo
+                ->body("Tu reporte ha sido actualizado. Estado: **" . ucfirst($record->estado) . "**")
+                ->sendToDatabase($record->user) // Llega a la campana del Usuario
+                ->send(); // Toast flotante inmediato
+        }
     }
 
     public static function getPages(): array
@@ -152,4 +172,15 @@ class TicketResource extends Resource
             'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
+    public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    // Si el usuario NO es el administrador (ID 1), solo ve sus propios tickets
+    if (auth()->id() !== 1) {
+        $query->where('user_id', auth()->id());
+    }
+
+    return $query;
+}
 }

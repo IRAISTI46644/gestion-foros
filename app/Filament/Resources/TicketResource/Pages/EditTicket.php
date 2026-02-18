@@ -38,13 +38,13 @@ class EditTicket extends EditRecord
                         ->placeholder('Escribe aquí la respuesta para el usuario...'),
                 ])
                 ->action(function (array $data, $record) {
-                    // 1. Guardamos la respuesta y el nuevo estado
+                    // 1. Guardamos los cambios en la base de datos
                     $record->update($data);
                     
                     // 2. Disparamos la notificación al usuario
                     TicketResource::afterSave($record);
 
-                    // 3. Alerta de éxito visual para el Admin
+                    // 3. Alerta de éxito visual inmediata para el Admin
                     Notification::make()
                         ->title('Ticket actualizado y notificación enviada')
                         ->success()
@@ -56,12 +56,11 @@ class EditTicket extends EditRecord
     }
 
     /**
-     * IMPORTANTE: Este método se ejecuta si editas el ticket 
-     * usando el botón "Guardar" normal de abajo.
+     * Se ejecuta si usas el botón "Guardar" estándar de Filament.
      */
     protected function afterSave(): void
     {
-        // Evitamos que se pierda la notificación en ediciones estándar
+        // Llama al método estático del Resource para notificar al usuario
         TicketResource::afterSave($this->record);
     }
 }

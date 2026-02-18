@@ -19,7 +19,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\HtmlString;
-// Importamos el plugin del calendario
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -32,8 +31,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration(CustomRegister::class) 
-            //->databaseNotifications()
-            
+            ->databaseNotifications() // Activa la campana
+            ->databaseNotificationsPolling('10s') // Eliminado el punto y coma aquí
             ->brandName('SICOM')
             ->colors([
                 'primary' => '#800020',
@@ -48,7 +47,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 \App\Filament\Widgets\UserStats::class,
             ])
-            // Registramos el plugin aquí para que Filament lo reconozca
             ->plugins([
                 FilamentFullCalendarPlugin::make()
                     ->selectable()

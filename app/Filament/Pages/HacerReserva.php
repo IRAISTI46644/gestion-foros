@@ -21,7 +21,7 @@ class HacerReserva extends Page
     public $selectedDate = null;
     public $selectedTime = null;
     
-    public $horarios = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+    public $horarios = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00','17:00','18:00','19:00','20:00'];
 
     public function seleccionarForo($id)
     {
@@ -65,9 +65,5 @@ class HacerReserva extends Page
         Notification::make()->title('¡Reserva Exitosa!')->success()->send();
         return redirect()->to('/admin/reservas');
     }
-    public static function canAccess(): bool
-{
-    // Solo los de TV y Radio pueden entrar a esta página
-    return in_array(auth()->user()->direccion, ['tv', 'radio','admin']);
-}
+
 }

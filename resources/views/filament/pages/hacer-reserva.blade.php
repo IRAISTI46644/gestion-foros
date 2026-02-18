@@ -2,7 +2,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 antialiased">
         
         <div class="lg:col-span-4 space-y-4">
-            <h3 class="text-[#800020] dark:text-[#a31535] text-[10px] font-black uppercase tracking-[0.2em] text-center mb-4">1. Selecciona Foro o Cabina</h3>
+            <h3 class="text-[#800020] dark:text-[#f87171] text-[10px] font-black uppercase tracking-[0.2em] text-center mb-4">
+                1. Selecciona Foro o Cabina
+            </h3>
             
             <div class="space-y-3 overflow-y-auto pr-1 custom-scrollbar" style="max-height: 700px;">
                 @foreach(\App\Models\Foro::all() as $foro)
@@ -31,11 +33,13 @@
             </div>
         </div>
 
-        <div class="lg:col-span-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-[2.5rem] p-8 shadow-xl flex flex-col min-h-[650px] relative overflow-hidden text-black dark:text-white">
+        <div class="lg:col-span-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-[2.5rem] p-8 shadow-xl flex flex-col min-h-[650px] relative overflow-hidden text-gray-900 dark:text-white">
             @if($selectedForoId)
                 <div class="flex flex-col flex-grow">
                     <div class="border-b border-gray-100 dark:border-gray-800 pb-6 mb-8">
-                        <h2 class="text-4xl font-black tracking-tighter uppercase leading-none text-gray-900 dark:text-white">Reservar {{ $tipoEspacio }}</h2>
+                        <h2 class="text-4xl font-black tracking-tighter uppercase leading-none text-gray-900 dark:text-white">
+                            Reservar {{ $tipoEspacio }}
+                        </h2>
                         <div class="flex items-center gap-2 mt-3">
                             <span class="w-2 h-2 rounded-full bg-[#800020] animate-pulse"></span>
                             <p class="text-gray-500 dark:text-gray-400 text-[10px] font-black uppercase tracking-widest">
@@ -76,7 +80,7 @@
 
                     <div class="mt-auto pt-10">
                         @if($selectedDate && $selectedTime)
-                            <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-8 rounded-[2rem] shadow-inner flex flex-col md:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-bottom-4">
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 rounded-[2rem] shadow-inner flex flex-col md:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-bottom-4">
                                 <div class="text-center md:text-left">
                                     <p class="text-[15px] font-black text-[#800020] dark:text-[#f87171] uppercase tracking-widest mb-1">Confirmación de Cita</p>
                                     <h4 class="text-gray-900 dark:text-white font-black text-3xl uppercase tracking-tighter leading-none">
@@ -88,21 +92,23 @@
                                 </div>
 
                                 <button wire:click="guardarReserva" 
-                                    class="w-full md:w-auto bg-[#800020] hover:bg-[#600018] text-white px-12 py-6 rounded-2xl font-black text-md uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
+                                    class="w-full md:w-auto bg-[#800020] hover:bg-[#600018] text-gray-600 px-12 py-6 rounded-2xl font-black text-md uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
                                     Confirmar 
                                 </button>
                             </div>
                         @else
                             <div class="p-8 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] text-center">
-                                <p class="text-gray-400 dark:text-gray-600 font-bold uppercase text-[10px] tracking-[0.2em]">Selecciona fecha y hora para habilitar el botón</p>
+                                <p class="text-gray-400 dark:text-gray-600 font-bold uppercase text-[10px] tracking-[0.2em]">
+                                    Selecciona fecha y hora para habilitar el botón
+                                </p>
                             </div>
                         @endif
                     </div>
                 </div>
             @else
                 <div class="flex-grow flex flex-col items-center justify-center space-y-4 opacity-30">
-                    <x-heroicon-o-finger-print class="w-16 h-16 text-[#800020] dark:text-[#a31535] animate-pulse"/>
-                    <p class="text-[#800020] dark:text-[#a31535] font-black uppercase text-[10px] tracking-[0.3em]">Selecciona Foro o Cabina</p>
+                    <x-heroicon-o-finger-print class="w-16 h-16 text-[#800020] dark:text-[#f87171] animate-pulse"/>
+                    <p class="text-[#800020] dark:text-[#f87171] font-black uppercase text-[10px] tracking-[0.3em]">Selecciona Foro o Cabina</p>
                 </div>
             @endif
         </div>

@@ -11,10 +11,11 @@ class CreateTicket extends CreateRecord
 
     /**
      * Se ejecuta justo después de que el usuario crea el ticket.
+     * Enviamos la notificación al Administrador (ID 1).
      */
     protected function afterCreate(): void
     {
-        // Notifica al Admin (ID 1) sobre el nuevo reporte
+        // Llamamos al método estático definido en el Resource para notificar al admin
         TicketResource::afterCreate($this->record);
     }
 }
