@@ -13,7 +13,7 @@ class HacerReserva extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static string $view = 'filament.pages.hacer-reserva';
-    protected static ?string $title = 'Reservar Espacio SICOM';
+    protected static ?string $title = 'Agendar';
 
     public $selectedForoId = null;
     public $foroNombre = ''; 

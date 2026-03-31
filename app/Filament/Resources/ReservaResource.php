@@ -22,7 +22,7 @@ class ReservaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     
-    protected static ?string $navigationLabel = 'Control de Reservas';
+    protected static ?string $navigationLabel = 'Mis Reservas';
 
     public static function form(Form $form): Form
     {
